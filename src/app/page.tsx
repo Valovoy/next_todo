@@ -1,101 +1,112 @@
-import Image from "next/image";
+'use client'
+import { useState } from 'react'
+import IconButton from '~/ui/IconButton'
+import TaskItem from '~/ui/TaskItem'
+
+interface Task {
+	value: string
+	isDone: boolean
+}
+
+type TaskStatus = 'done' | 'notDone'
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+	const [tasks, setTasks] = useState<Task[]>([])
+	const [task, setTask] = useState<string>('')
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+	const handleAddTask = () => {
+		setTasks(prev => [...prev, { value: task, isDone: false }])
+		setTask('')
+	}
+
+	const handleDeleteTask = (task: string) => {
+		setTasks(prev => prev.filter(item => item.value !== task))
+	}
+
+	const handleToggleTask = (task: string) => {
+		setTasks(prev =>
+			prev.map(item =>
+				item.value === task ? { ...item, isDone: !item.isDone } : item
+			)
+		)
+	}
+
+	const groupedTasks = tasks?.reduce(
+		(acc: Record<TaskStatus, Task[]>, task) => {
+			const key = task?.isDone ? 'done' : 'notDone'
+
+			acc[key].push(task)
+
+			return acc
+		},
+		{
+			done: [],
+			notDone: [],
+		}
+	)
+
+	return (
+		<div className='max-w-screen-sm sm:mt-24 mx-auto px-16 py-12 bg-container sm:rounded-[20px]'>
+			<div className='flex justify-between gap-3'>
+				<input
+					type='text'
+					value={task}
+					onChange={e => setTask(e.target.value)}
+					className='w-full bg-container rounded-[10px] border-purple border py-2 px-3 focus:outline-none max-h-10'
+					placeholder='Add task'
+				/>
+				<IconButton
+					src='/plus.svg'
+					alt='Add new task'
+					onClick={handleAddTask}
+				/>
+			</div>
+			<section className='mt-12'>
+				<h4 className='text-white'>
+					Tasks to do - {groupedTasks.notDone.length}
+				</h4>
+				{groupedTasks.notDone?.map(task => (
+					<TaskItem
+						key={task.value}
+						value={task.value}
+						isDone={task.isDone}
+						handleToggleTask={handleToggleTask}
+						handleDeleteTask={handleDeleteTask}
+					/>
+					// <div
+					// 	key={task.value}
+					// 	className='bg-midnight rounded-[10px] px-5 py-4 text-purple flex justify-between items-center mt-3'
+					// >
+					// 	{task.value}
+					// 	<div className='flex gap-1'>
+					// 		<IconButton
+					// 			src='/check.svg'
+					// 			alt='Check'
+					// 			className='bg-transparent'
+					// 			onClick={() => handleToggleTask(task.value)}
+					// 		/>
+					// 		<IconButton
+					// 			src='/trash.svg'
+					// 			alt='Delete task'
+					// 			className='bg-transparent'
+					// 			onClick={() => handleDeleteTask(task.value)}
+					// 		/>
+					// 	</div>
+					// </div>
+				))}
+			</section>
+			<section className='mt-12'>
+				<h4 className='text-white'>Done - {groupedTasks.done.length}</h4>
+				{groupedTasks.done?.map(task => (
+					<TaskItem
+						key={task.value}
+						value={task.value}
+						isDone={task.isDone}
+						handleToggleTask={handleToggleTask}
+						handleDeleteTask={handleDeleteTask}
+					/>
+				))}
+			</section>
+		</div>
+	)
 }

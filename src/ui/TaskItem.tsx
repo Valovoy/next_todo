@@ -1,3 +1,4 @@
+import { Check, Close, Trash } from '~/ui/icons'
 import IconButton from './IconButton'
 
 interface TaskItemProps {
@@ -22,15 +23,15 @@ const TaskItem = ({
 			{value}
 			<div className='flex gap-1'>
 				<IconButton
-					src='/check.svg'
-					alt='Check'
+					Icon={isDone ? Close : Check}
 					className='bg-transparent'
+					iconClassName={isDone ? 'text-done' : 'text-purple'}
 					onClick={() => handleToggleTask(value)}
 				/>
 				<IconButton
-					src='/trash.svg'
-					alt='Delete task'
+					Icon={Trash}
 					className='bg-transparent'
+					iconClassName={isDone ? 'text-done' : 'text-purple'}
 					onClick={() => handleDeleteTask(value)}
 				/>
 			</div>

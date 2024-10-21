@@ -1,16 +1,16 @@
-import Image from 'next/image'
+import React from 'react'
 
 interface IconButtonProps {
-	src: string
-	alt: string
+	Icon: React.FC<React.SVGProps<SVGSVGElement>>
 	className?: string
+	iconClassName?: string
 	onClick?: () => void
 }
 
 const IconButton = ({
-	src,
+	Icon,
 	className,
-	alt = '',
+	iconClassName,
 	onClick = () => null,
 }: IconButtonProps) => {
 	return (
@@ -20,7 +20,7 @@ const IconButton = ({
 				className || ''
 			}`}
 		>
-			<Image src={src} width={24} height={24} alt={alt} />
+			<Icon width={24} height={24} className={iconClassName || ''} />
 		</button>
 	)
 }

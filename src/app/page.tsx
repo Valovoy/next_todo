@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import IconButton from '~/ui/IconButton'
 import TaskItem from '~/ui/TaskItem'
+import { Plus } from '~/ui/icons'
 
 interface Task {
 	value: string
@@ -55,11 +56,7 @@ export default function Home() {
 					className='w-full bg-container rounded-[10px] border-purple border py-2 px-3 focus:outline-none max-h-10'
 					placeholder='Add task'
 				/>
-				<IconButton
-					src='/plus.svg'
-					alt='Add new task'
-					onClick={handleAddTask}
-				/>
+				<IconButton Icon={Plus} onClick={handleAddTask} />
 			</div>
 			<section className='mt-12'>
 				<h4 className='text-white'>
@@ -73,26 +70,6 @@ export default function Home() {
 						handleToggleTask={handleToggleTask}
 						handleDeleteTask={handleDeleteTask}
 					/>
-					// <div
-					// 	key={task.value}
-					// 	className='bg-midnight rounded-[10px] px-5 py-4 text-purple flex justify-between items-center mt-3'
-					// >
-					// 	{task.value}
-					// 	<div className='flex gap-1'>
-					// 		<IconButton
-					// 			src='/check.svg'
-					// 			alt='Check'
-					// 			className='bg-transparent'
-					// 			onClick={() => handleToggleTask(task.value)}
-					// 		/>
-					// 		<IconButton
-					// 			src='/trash.svg'
-					// 			alt='Delete task'
-					// 			className='bg-transparent'
-					// 			onClick={() => handleDeleteTask(task.value)}
-					// 		/>
-					// 	</div>
-					// </div>
 				))}
 			</section>
 			<section className='mt-12'>
